@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <windows.h> 
 #include <mmsystem.h> 
 #include <string>
@@ -6,14 +5,13 @@
 #include "MidiControllerAPI.h";
 #pragma comment(lib, "winmm.lib")
 
-#ifndef DEBUG_MODE
+#ifdef UNITY_MODE
 extern "C"
 {
 #endif // !DEBUGMODE
 
 // midi controller information
 #define CONTROLLER_NAME "WORLDE easy control"
-
 #define SLIDER_BIAS 3
 #define SLIDER_NUM 9
 #define KNOB_BIAS 14
@@ -22,9 +20,7 @@ extern "C"
 #define BUTTON_NUM 9
 #define SYSTEM_BUTTON_BIAS 44
 #define SYSTEM_BUTTON_NUM 6
-
 #define OTHER_BUTTON_NUM 4
-
 
 
 class MidiController {
@@ -111,12 +107,13 @@ public:
             }
         }
 
+        // 他のボタンも使いたいなら、ここに記述してください
         else {
             printf("this program does not handle the buttons\nbutton id = %u, button_value = %u\n", name, value);
         }
     }
 
-    bool GetSliderValue(float* out_array, int first_idx, int last_idx) {
+    bool GetSliderValue(float* out_array, int first_idx, int last_idx) const{
         if (!enable) return false;
         if (first_idx == -1 && last_idx == -1) {
             // 全てのスライダーの情報を提供する
@@ -126,7 +123,7 @@ public:
         for (int i = first_idx; i < last_idx; i++) out_array[i] = sliders[i];
         return true;
     }
-    bool GetKnobValue(float* out_array, int first_idx, int last_idx) {
+    bool GetKnobValue(float* out_array, int first_idx, int last_idx) const{
         if (!enable) return false;
         if (first_idx == -1 && last_idx == -1) {
             // 全てのノブの情報を提供する
@@ -136,7 +133,7 @@ public:
         for (int i = first_idx; i < last_idx; i++) out_array[i] = knobs[i];
         return true;
     }
-    bool GetButtonState(int* out_array, int first_idx, int last_idx) {
+    bool GetButtonState(bool* out_array, int first_idx, int last_idx){
         if (!enable) return false;
         if (first_idx == -1 && last_idx == -1) {
             // 全てのボタンの情報を提供する
@@ -144,12 +141,12 @@ public:
             last_idx = BUTTON_NUM;
         }
         for (int i = first_idx; i < last_idx; i++) {
-            out_array[i] = (app_buttons[i]) ? 1 : 0;
+            out_array[i] = (app_buttons[i]) ? true : false;
             app_buttons[i] = false;
         }
         return true;
     }
-    bool GetSystemButtonState(int* out_array, int first_idx, int last_idx) {
+    bool GetSystemButtonState(bool* out_array, int first_idx, int last_idx) {
         if (!enable) return false;
         if (first_idx == -1 && last_idx == -1) {
             // 全てのシステムボタンの情報を提供する
@@ -157,16 +154,16 @@ public:
             last_idx = SYSTEM_BUTTON_NUM;
         }
         for (int i = first_idx; i < last_idx; i++) {
-            out_array[i] = (app_system_buttons[i]) ? 1 : 0;
+            out_array[i] = (app_system_buttons[i]) ? true : false;
             app_system_buttons[i] = false;
         }
         return true;
     }
-    bool GetSystemButtonState(int* out_array, const char* name) {
+    bool GetSystemButtonState(bool* out_array, const char* name) {
         if (!enable) return false;
         if (system_buttons_map.count(name)) {
             int idx = system_buttons_map[name];
-            *out_array = (app_system_buttons[idx]) ? 1 : 0;
+            *out_array = (app_system_buttons[idx]) ? true : false;
             app_system_buttons[idx] = false;
             return true;
         }
@@ -177,7 +174,7 @@ public:
         button_on_interval = msec;
         return true;
     }
-    bool Enable() {
+    bool Enable() const{
         return enable;
     }
 };
@@ -219,9 +216,12 @@ void CALLBACK MidiInProc(HMIDIIN midi_in_handle, UINT wMsg, DWORD dwInstance, DW
 
 
 
-// API for Unity
-UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API OpenController() {
 
+
+
+// API for Unity
+
+UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API OpenMidiController() {
     // PCに接続されているMIDIコントローラの名前から、ターゲットコントローラーのIDを入手する
 
     unsigned int target_dev_id = -1;
@@ -274,7 +274,7 @@ UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API OpenController() {
     return true;
 }
 
-UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API CloseController() {
+UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API CloseMidiController() {
     if (!midi_controller->Enable()) {
         delete midi_controller;
         return false;
@@ -286,26 +286,43 @@ UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API CloseController() {
     return true;
 }
 
-UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API GetSliderValue(float* out_array, int first_idx, int last_idx) {
+UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API GetSliderValues(float* out_array, int first_idx, int last_idx) {
     return midi_controller->GetSliderValue(out_array, first_idx, last_idx);
 }
-UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API GetKnobValue(float* out_array, int first_idx, int last_idx) {
+UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API GetKnobValues(float* out_array, int first_idx, int last_idx) {
     return midi_controller->GetKnobValue(out_array, first_idx, last_idx);
 }
-UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API GetButtonState(int* out_array, int first_idx, int last_idx) {
+UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API GetButtonStates(bool* out_array, int first_idx, int last_idx) {
     return midi_controller->GetButtonState(out_array, first_idx, last_idx);
 }
-UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API GetSystemButtonState(int* out_array, int first_idx, int last_idx) {
+UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API GetSystemButtonStates(bool* out_array, int first_idx, int last_idx) {
     return midi_controller->GetSystemButtonState(out_array, first_idx, last_idx);
 }
-UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API GetSystemButtonStateWithName(int* out_array, const char *name) {
-    return midi_controller->GetSystemButtonState(out_array, name);
+UNITY_INTERFACE_EXPORT float UNITY_INTERFACE_API Get1SliderValue(int id) {
+    float ret = -1;
+    midi_controller->GetSliderValue(&ret, id, id + 1);
+    return ret;
+}
+UNITY_INTERFACE_EXPORT float UNITY_INTERFACE_API Get1KnobValue(int id) {
+    float ret = -1;
+    midi_controller->GetKnobValue(&ret, id, id + 1);
+    return ret;
+}
+UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API Get1ButtonState(int id) {
+    bool ret = false;
+    midi_controller->GetButtonState(&ret, id, id + 1);
+    return ret;
+}
+UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API Get1SystemButtonState(const char *name) {
+    bool ret = false;
+    midi_controller->GetSystemButtonState(&ret, name);
+    return ret;
 }
 UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API SetButtonOnInterval(int msec) {
     return midi_controller->SetButtonOnInterval(msec);
 }
 
 
-#ifndef DEBUG_MODE
+#ifdef UNITY_MODE
 }
 #endif // !DEBUGMODE

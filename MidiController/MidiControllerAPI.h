@@ -1,11 +1,10 @@
 #pragma once
 
-//コメントアウト：dll作成モード、コメント：debugモードmain関数必要
-//それに合わせて、プロジェクトのプロパティの構成の種類をexeとdllに切り替える必要あり
+// コメント無効：dll作成モード（プロジェクト→プロパティ→構成の種類→dllに設定）
+// コメント有効：cpp実行モード（プロジェクト→プロパティ→構成の種類→exeに設定）
+ #define UNITY_MODE 
 
-//#define DEBUG_MODE 
-
-#ifdef DEBUG_MODE
+#ifndef UNITY_MODE
 #define UNITY_INTERFACE_API  
 #define UNITY_INTERFACE_EXPORT  
 #else
@@ -14,21 +13,27 @@
 #endif
 
 //出力する関数
-#ifndef DEBUG_MODE
+#ifdef UNITY_MODE
 extern "C"
 {
 #endif
 
 // API for Unity
-	UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API OpenController();
-	UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API CloseController();
-	UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API GetSliderValue(float* out_array, int first_idx = -1, int last_idx = -1);
-	UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API GetKnobValue(float* out_array, int first_idx = -1, int last_idx = -1);
-	UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API GetButtonState(int* out_array, int first_idx = -1, int last_idx = -1);
-	UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API GetSystemButtonState(int* out_array, int first_idx = -1, int last_idx = -1);
-	UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API GetSystemButtonStateWithName(int* out_array, const char* name);
-	UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API SetButtonOnInterval(int msec);
+UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API OpenMidiController();
+UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API CloseMidiController();
 
-#ifndef DEBUG_MODE
+UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API GetSliderValues(float* out_array, int first_idx = -1, int last_idx = -1);
+UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API GetKnobValues(float* out_array, int first_idx = -1, int last_idx = -1);
+UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API GetButtonStates(bool* out_array, int first_idx = -1, int last_idx = -1);
+UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API GetSystemButtonStates(bool* out_array, int first_idx = -1, int last_idx = -1);
+
+UNITY_INTERFACE_EXPORT float UNITY_INTERFACE_API Get1SliderValue(int id);
+UNITY_INTERFACE_EXPORT float UNITY_INTERFACE_API Get1KnobValue(int id);
+UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API Get1ButtonState(int id);
+UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API Get1SystemButtonState(const char* name);
+
+UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API SetButtonOnInterval(int msec);
+
+#ifdef UNITY_MODE
 }
 #endif
