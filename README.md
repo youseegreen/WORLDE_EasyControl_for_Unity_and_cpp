@@ -25,7 +25,6 @@ public class Test : MonoBehaviour
 ## How to use in c++
 1. Add ``MidiControllerAPI.h``, ``MidiControllerAPI.c++`` to your c++ project
 2. Replace ``UNITY_MODE`` to ``// UNITY_MODE`` at the first statement of ``MidiControllerAPI.h``
-2. Replace ``UNITY_MODE`` to ``// UNITY_MODE`` at the first statement of ``MidiControllerAPI.h``
 3. The controller's state can be use as following...
 ```cpp
 int main(){
@@ -75,15 +74,15 @@ int main(){
 ( 0: "PLAY", 1: "")
 
 ``float Get1SliderValue(int index)``  
-引数：index (0~8)  
-戻値：slider[index]の値 (0~1 or -1)
+引数：index (0～8)  
+戻値：slider[index]の値 (0～1 or -1)
 
 ``float Get1KnobValue(int index)``  
-引数：index (0~8)  
-戻値：knob[index]の値 (0~1 or -1)
+引数：index (0～8)  
+戻値：knob[index]の値 (0～1 or -1)
 
 ``bool Get1ButtonState(int index)``  
-引数：index (0~8)  
+引数：index (0～8)  
 戻値：button[index]の値 (true or false)  
 
 ``bool Get1SystemButtonState(const char* name)``  
