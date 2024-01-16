@@ -87,8 +87,12 @@ public:
                     buttons_lastontimes[idx] = time;
                 }
                 //else {
-                //    printf("chattering”­¶?\n");
+                //    printf("chatteringç™ºç”Ÿ?\n");
                 //}
+            }
+            else
+            {
+                app_buttons[idx] = false;
             }
         }
 
@@ -102,12 +106,12 @@ public:
                     system_buttons_lastontimes[idx] = time;
                 }
                 //else {
-                //    printf("chattering”­¶?\n");
+                //    printf("chatteringç™ºç”Ÿ?\n");
                 //}
             }
         }
 
-        // ‘¼‚Ìƒ{ƒ^ƒ“‚àg‚¢‚½‚¢‚È‚çA‚±‚±‚É‹Lq‚µ‚Ä‚­‚¾‚³‚¢
+        // ä»–ã®ãƒœã‚¿ãƒ³ã‚‚ä½¿ã„ãŸã„ãªã‚‰ã€ã“ã“ã«è¨˜è¿°ã—ã¦ãã ã•ã„
         else {
             printf("this program does not handle the buttons\nbutton id = %u, button_value = %u\n", name, value);
         }
@@ -116,7 +120,7 @@ public:
     bool GetSliderValue(float* out_array, int first_idx, int last_idx) const{
         if (!enable) return false;
         if (first_idx == -1 && last_idx == -1) {
-            // ‘S‚Ä‚ÌƒXƒ‰ƒCƒ_[‚Ìî•ñ‚ğ’ñ‹Ÿ‚·‚é
+            // å…¨ã¦ã®ã‚¹ãƒ©ã‚¤ãƒ€ãƒ¼ã®æƒ…å ±ã‚’æä¾›ã™ã‚‹
             first_idx = 0;
             last_idx = SLIDER_NUM;
         }
@@ -126,7 +130,7 @@ public:
     bool GetKnobValue(float* out_array, int first_idx, int last_idx) const{
         if (!enable) return false;
         if (first_idx == -1 && last_idx == -1) {
-            // ‘S‚Ä‚Ìƒmƒu‚Ìî•ñ‚ğ’ñ‹Ÿ‚·‚é
+            // å…¨ã¦ã®ãƒãƒ–ã®æƒ…å ±ã‚’æä¾›ã™ã‚‹
             first_idx = 0;
             last_idx = KNOB_NUM;
         }
@@ -136,7 +140,7 @@ public:
     bool GetButtonState(bool* out_array, int first_idx, int last_idx){
         if (!enable) return false;
         if (first_idx == -1 && last_idx == -1) {
-            // ‘S‚Ä‚Ìƒ{ƒ^ƒ“‚Ìî•ñ‚ğ’ñ‹Ÿ‚·‚é
+            // å…¨ã¦ã®ãƒœã‚¿ãƒ³ã®æƒ…å ±ã‚’æä¾›ã™ã‚‹
             first_idx = 0;
             last_idx = BUTTON_NUM;
         }
@@ -149,7 +153,7 @@ public:
     bool GetSystemButtonState(bool* out_array, int first_idx, int last_idx) {
         if (!enable) return false;
         if (first_idx == -1 && last_idx == -1) {
-            // ‘S‚Ä‚ÌƒVƒXƒeƒ€ƒ{ƒ^ƒ“‚Ìî•ñ‚ğ’ñ‹Ÿ‚·‚é
+            // å…¨ã¦ã®ã‚·ã‚¹ãƒ†ãƒ ãƒœã‚¿ãƒ³ã®æƒ…å ±ã‚’æä¾›ã™ã‚‹
             first_idx = 0;
             last_idx = SYSTEM_BUTTON_NUM;
         }
@@ -179,8 +183,8 @@ public:
     }
 };
 
-HMIDIIN midi_in_handle; // midiƒRƒ“ƒgƒ[ƒ‰[‚Ìƒnƒ“ƒhƒ‹
-MidiController* midi_controller; // ƒRƒ“ƒgƒ[ƒ‰[‚Ìó‘Ô
+HMIDIIN midi_in_handle; // midiã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®ãƒãƒ³ãƒ‰ãƒ«
+MidiController* midi_controller; // ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®çŠ¶æ…‹
 
 void CALLBACK MidiInProc(HMIDIIN midi_in_handle, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2) {
     switch (wMsg)
@@ -222,7 +226,7 @@ void CALLBACK MidiInProc(HMIDIIN midi_in_handle, UINT wMsg, DWORD dwInstance, DW
 // API for Unity
 
 UNITY_INTERFACE_EXPORT bool UNITY_INTERFACE_API OpenMidiController() {
-    // PC‚ÉÚ‘±‚³‚ê‚Ä‚¢‚éMIDIƒRƒ“ƒgƒ[ƒ‰‚Ì–¼‘O‚©‚çAƒ^[ƒQƒbƒgƒRƒ“ƒgƒ[ƒ‰[‚ÌID‚ğ“üè‚·‚é
+    // PCã«æ¥ç¶šã•ã‚Œã¦ã„ã‚‹MIDIã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ã®åå‰ã‹ã‚‰ã€ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®IDã‚’å…¥æ‰‹ã™ã‚‹
 
     unsigned int target_dev_id = -1;
     unsigned int num_devices = midiInGetNumDevs();
